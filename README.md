@@ -1,6 +1,3 @@
-Here's a detailed README file for your **Royal SafeTravel** project on GitHub. You can modify it as needed before pushing it to your repository.  
-
----
 
 # 🚖 Royal SafeTravel
 
