@@ -3,8 +3,6 @@
 
 ### A Secure Ride-Hailing Web Application  
 
-![Royal SafeTravel Banner](https://your-image-link-here) *(Optional: Add an image to make the README visually appealing.)*  
-
 ## 📌 Overview  
 
 **Royal SafeTravel** is an innovative and secure ride-hailing platform that prioritizes passenger safety. Unlike conventional services, it integrates **professional security escort services** to ensure a safe and reliable transportation experience. This platform is particularly designed for individuals who require additional security measures, such as **corporate executives, night travelers, and high-risk individuals**.
