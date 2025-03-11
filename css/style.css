@@ -187,7 +187,7 @@ span {
 
 .services-content {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, auto));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 380px));
     align-items: center;
     gap: 2.3rem;
     margin-top: 4.2rem;
@@ -198,7 +198,7 @@ span {
     border-radius: 28px;
     border: 1px solid transparent;
     box-shadow: 0 0 5px var(--main-color);
-    padding: 20px;
+    padding: 50px;
     transition: all 0.5s ease;
 }
 

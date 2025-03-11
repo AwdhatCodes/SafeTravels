@@ -12,7 +12,7 @@ window.onscroll = () => {
 }
 
 const typed = new Typed('.multiple-text',  {
-    strings: ['Physical Fitness', 'Weight Gain', 'Strength Training', 'Fat Lose', 'Weightlifting', 'Running'],
+    strings: ["Safe and Secure Rides", "Reliable Journeys", "Peace of Mind"],
     typeSpeed: 60,
     backSpeed: 60,
     backDelay: 1000,
