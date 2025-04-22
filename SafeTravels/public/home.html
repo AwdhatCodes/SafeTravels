@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/boxicons.min.css" rel="stylesheet">
+    <title>Royal SafeTravels - Home</title>
+    <style>
+        :root {
+            --primary-color: #00ff00;
+            --dark-color: #0a0a0a;
+            --darker-color: #000000;
+            --light-color: #ffffff;
+            --gray-color: rgba(255, 255, 255, 0.1);
+            --text-gray: #a0a0a0;
+            --neon-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--dark-color);
+            min-height: 100vh;
+            color: var(--light-color);
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 4px;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+        }
+
+        .search-bar i {
+            color: #666;
+            margin-right: 8px;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .search-bar:focus-within {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .search-result {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-result:last-child {
+            border-bottom: none;
+        }
+
+        .search-result:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Services Section */
+        .services {
+            margin-top: 120px;
+            padding: 1rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-card {
+            background: var(--glass-bg);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 0, 0.1));
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--neon-shadow);
+            border-color: var(--primary-color);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-card p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Recent Trips */
+        .recent-trips {
+            padding: 1rem;
+        }
+
+        .recent-trips h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .trip-card {
+            background: var(--glass-bg);
+            margin-bottom: 1rem;
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .trip-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--neon-shadow);
+            border-color: var(--primary-color);
+        }
+
+        .trip-icon {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 1rem;
+            border-radius: 50%;
+            margin-right: 1rem;
+            color: var(--primary-color);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem;
+            border-top: 1px solid rgba(0, 255, 0, 0.1);
+        }
+
+        .nav-item {
+            text-align: center;
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-item:hover {
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .nav-item span {
+            font-size: 0.8rem;
+            display: block;
+        }
+
+        /* Book Ride Button */
+        .book-ride {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: var(--primary-color);
+            color: var(--darker-color);
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .book-ride:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .service-card {
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .service-card:nth-child(1) { animation-delay: 0.1s; }
+        .service-card:nth-child(2) { animation-delay: 0.2s; }
+        .service-card:nth-child(3) { animation-delay: 0.3s; }
+        .service-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .trip-card {
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .trip-card:nth-child(1) { animation-delay: 0.5s; }
+        .trip-card:nth-child(2) { animation-delay: 0.6s; }
+
+        /* Map Section */
+        .map-section {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Increased max-width */
+            margin: 0 auto 20px; /* Center the map */
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 60%; /* This creates a 5:3 aspect ratio (wider than tall) */
+            height: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 40px;
+            left: 30px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 250px;
+            pointer-events: auto;
+            transform: translate(-15px, 15px);
+        }
+
+        .location-inputs {
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1000;
+            padding-left: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1000;
+            padding-left: 10px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: 500;
+            color: #333;
+            font-size: 12px; /* Smaller font size */
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px; /* Smaller font size */
+        }
+
+        .map-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .map-buttons button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .map-buttons button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Authentication check
+        window.onload = function() {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = '/login';
+            }
+            // Display user name if available
+            const userData = JSON.parse(localStorage.getItem('registeredUser') || '{}');
+            if (userData.fullname) {
+                document.querySelector('.user-greeting').textContent = `Welcome, ${userData.fullname}`;
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            window.location.href = '/login';
+        }
+
+        // Search functionality
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                const searchValue = event.target.value;
+                alert(`Searching for routes to: ${searchValue}`);
+                // Here you would typically make an API call to search for routes
+            }
+        }
+
+        // Service card click handlers
+        function handleServiceClick(service) {
+            switch(service) {
+                case 'premium':
+                    showBookingModal('Premium Ride', 'Select your luxury vehicle');
+                    break;
+                case 'security':
+                    showBookingModal('Security Escort', 'Select security package');
+                    break;
+                case 'corporate':
+                    showBookingModal('Corporate Travel', 'Select business travel option');
+                    break;
+                case 'vip':
+                    showBookingModal('VIP Service', 'Select VIP package');
+                    break;
+            }
+        }
+
+        // Booking modal functionality
+        function showBookingModal(title, subtitle) {
+            const modal = document.getElementById('bookingModal');
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalSubtitle').textContent = subtitle;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+            const pickup = document.getElementById('pickup').value;
+            const destination = document.getElementById('destination').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+
+            if (!pickup || !destination || !date || !time) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            alert(`Booking confirmed!\nFrom: ${pickup}\nTo: ${destination}\nDate: ${date}\nTime: ${time}`);
+            closeModal();
+            // Here you would typically make an API call to create the booking
+        }
+
+        // Navigation handlers
+        function handleNavigation(section) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            switch(section) {
+                case 'home':
+                    document.querySelector('[data-nav="home"]').classList.add('active');
+                    document.getElementById('servicesSection').style.display = 'block';
+                    document.getElementById('activitySection').style.display = 'none';
+                    document.getElementById('accountSection').style.display = 'none';
+                    break;
+                case 'activity':
+                    document.querySelector('[data-nav="activity"]').classList.add('active');
+                    document.getElementById('servicesSection').style.display = 'none';
+                    document.getElementById('activitySection').style.display = 'block';
+                    document.getElementById('accountSection').style.display = 'none';
+                    break;
+                case 'account':
+                    document.querySelector('[data-nav="account"]').classList.add('active');
+                    document.getElementById('servicesSection').style.display = 'none';
+                    document.getElementById('activitySection').style.display = 'none';
+                    document.getElementById('accountSection').style.display = 'block';
+                    break;
+            }
+        }
+    </script>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="search-container">
+            <div class="search-bar">
+                <i class='bx bx-search'></i>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Where would you like to go?"
+                    autocomplete="off"
+                >
+            </div>
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </header>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="map-controls">
+                <div class="location-inputs">
+                    <div class="input-group">
+                        <label for="pickup">Pickup Location</label>
+                        <input type="text" id="pickup" placeholder="Enter pickup location">
+                    </div>
+                    <div class="input-group">
+                        <label for="destination">Destination</label>
+                        <input type="text" id="destination" placeholder="Enter destination">
+                    </div>
+                </div>
+                <div class="map-buttons">
+                    <button onclick="setCurrentLocation()" class="btn btn-primary">Use Current Location</button>
+                    <button onclick="calculateAndDisplayRoute()" class="btn btn-success">Get Route</button>
+                    <button onclick="bookRide()" class="btn btn-warning">Book Ride</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="servicesSection">
+        <div class="services-grid">
+            <div class="service-card" onclick="handleServiceClick('premium')">
+                <i class='bx bx-car service-icon'></i>
+                <h3>Premium Ride</h3>
+                <p>Luxury vehicles with professional drivers</p>
+            </div>
+            <div class="service-card" onclick="handleServiceClick('security')">
+                <i class='bx bx-shield-quarter service-icon'></i>
+                <h3>Security Escort</h3>
+                <p>Armed security personnel for your safety</p>
+            </div>
+            <div class="service-card" onclick="handleServiceClick('corporate')">
+                <i class='bx bx-building-house service-icon'></i>
+                <h3>Corporate Travel</h3>
+                <p>Business travel solutions</p>
+            </div>
+            <div class="service-card" onclick="handleServiceClick('vip')">
+                <i class='bx bx-crown service-icon'></i>
+                <h3>VIP Service</h3>
+                <p>Exclusive high-end transportation</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activity Section -->
+    <section id="activitySection" style="display: none; margin-top: 120px; padding: 1rem;">
+        <h2 style="color: var(--primary-color); margin-bottom: 20px;">Your Activity</h2>
+        <div class="trip-card">
+            <div class="trip-icon">
+                <i class='bx bx-map'></i>
+            </div>
+            <div class="trip-details">
+                <h3>CBD - Westlands</h3>
+                <p>Yesterday, 2:30 PM • Premium Ride</p>
+                <p style="color: var(--primary-color)">Completed</p>
+            </div>
+        </div>
+        <!-- Add more trip history here -->
+    </section>
+
+    <!-- Account Section -->
+    <section id="accountSection" style="display: none; margin-top: 120px; padding: 1rem;">
+        <h2 style="color: var(--primary-color); margin-bottom: 20px;">Account Settings</h2>
+        <div class="account-info" style="background: var(--glass-bg); padding: 20px; border-radius: 12px;">
+            <p><strong>Name:</strong> <span id="userName"></span></p>
+            <p><strong>Email:</strong> <span id="userEmail"></span></p>
+            <button onclick="logout()" style="background: var(--primary-color); color: var(--darker-color); border: none; padding: 10px 20px; border-radius: 8px; margin-top: 20px; cursor: pointer;">Logout</button>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1001;">
+        <div style="position: relative; background: var(--dark-color); max-width: 500px; margin: 50px auto; padding: 20px; border-radius: 16px; border: 1px solid var(--primary-color);">
+            <button onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; background: none; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer;">&times;</button>
+            <h2 id="modalTitle" style="color: var(--primary-color); margin-bottom: 10px;"></h2>
+            <p id="modalSubtitle" style="color: var(--text-gray); margin-bottom: 20px;"></p>
+            <form onsubmit="handleBooking(event)">
+                <div style="margin-bottom: 15px;">
+                    <label style="color: var(--light-color);">Pickup Location</label>
+                    <input type="text" id="pickup" required style="width: 100%; padding: 10px; margin-top: 5px; background: var(--glass-bg); border: 1px solid var(--primary-color); border-radius: 8px; color: var(--light-color);">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="color: var(--light-color);">Destination</label>
+                    <input type="text" id="destination" required style="width: 100%; padding: 10px; margin-top: 5px; background: var(--glass-bg); border: 1px solid var(--primary-color); border-radius: 8px; color: var(--light-color);">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="color: var(--light-color);">Date</label>
+                    <input type="date" id="date" required style="width: 100%; padding: 10px; margin-top: 5px; background: var(--glass-bg); border: 1px solid var(--primary-color); border-radius: 8px; color: var(--light-color);">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="color: var(--light-color);">Time</label>
+                    <input type="time" id="time" required style="width: 100%; padding: 10px; margin-top: 5px; background: var(--glass-bg); border: 1px solid var(--primary-color); border-radius: 8px; color: var(--light-color);">
+                </div>
+                <button type="submit" style="width: 100%; padding: 12px; background: var(--primary-color); color: var(--darker-color); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Book Ride Button -->
+    <a href="#" class="book-ride" onclick="showBookingModal('Book a Ride', 'Select your ride details')">Book a Ride</a>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" data-nav="home" onclick="handleNavigation('home')">
+            <i class='bx bx-home'></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="activity" onclick="handleNavigation('activity')">
+            <i class='bx bx-time'></i>
+            <span>Activity</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="account" onclick="handleNavigation('account')">
+            <i class='bx bx-user'></i>
+            <span>Account</span>
+        </a>
+        <a href="#" class="nav-item" onclick="logout()">
+            <i class='bx bx-log-out'></i>
+            <span>Logout</span>
+        </a>
+    </nav>
+
+    <script>
+        // Initialize user data in account section
+        document.getElementById('userName').textContent = JSON.parse(localStorage.getItem('registeredUser') || '{}').fullname || 'Not available';
+        document.getElementById('userEmail').textContent = localStorage.getItem('userEmail') || 'Not available';
+    </script>
+
+    <!-- Replace Google Maps script with Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/map.js"></script>
+    <script>
+        // Initialize map when the page loads
+        window.onload = function() {
+            initMap();
+        }
+    </script>
+</body>
+</html>
