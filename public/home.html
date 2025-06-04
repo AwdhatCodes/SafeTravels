@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Royal SafeTravels - Home</title>
+  <link href="css/boxicons.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #00ff00;
+      --dark-color: #0a0a0a;
+      --light-color: #ffffff;
+      --gray-color: #181818;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--dark-color);
+      color: var(--light-color);
+    }
+    header {
+      padding: 1rem 2rem;
+      background: #000000e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--primary-color);
+    }
+    header h1 {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin: 0;
+    }
+    nav a {
+      color: var(--light-color);
+      margin-left: 2rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    nav a:hover {
+      color: var(--primary-color);
+    }
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem;
+      background: linear-gradient(to right, #000000e0, #0f0f0f);
+    }
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: #cccccc;
+      max-width: 600px;
+      margin: 0 auto 2rem auto;
+    }
+    .hero a button {
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
+      background: var(--primary-color);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .hero a button:hover {
+      background: #00cc00;
+    }
+    .services {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      padding: 3rem 1rem;
+      background: var(--gray-color);
+    }
+    .service-card {
+      background: #111;
+      border: 1px solid rgba(0,255,0,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      max-width: 300px;
+      text-align: center;
+      box-shadow: 0 0 12px #00ff0033;
+    }
+    .service-card i {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+    }
+    .service-card h3 {
+      margin-top: 1rem;
+      font-size: 1.3rem;
+    }
+    .service-card p {
+      font-size: 0.95rem;
+      color: #aaa;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: #000;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 768px) {
+      .services {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Royal SafeTravels</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="book-a-ride.html">Book a Ride</a>
+      <a href="#services">Services</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Ride with Safety, Style & Confidence</h2>
+    <p>Your trusted partner for premium rides, secure escorts, and affordable travel—24/7 availability at your fingertips.</p>
+    <a href="book-a-ride.html">
+      <button>Book a Ride</button>
+    </a>
+  </section>
+
+  <section class="services" id="services">
+    <div class="service-card">
+      <i class='bx bxs-car'></i>
+      <h3>Premium Rides</h3>
+      <p>Experience luxury with executive sedans, SUVs, and limousines.</p>
+    </div>
+    <div class="service-card">
+      <i class='bx bxs-shield-plus'></i>
+      <h3>Security Escorts</h3>
+      <p>Professional security teams and convoys for your protection.</p>
+    </div>
+    <div class="service-card">
+      <i class='bx bxs-taxi'></i>
+      <h3>Normal Vehicles</h3>
+      <p>Budget-friendly, clean, and reliable everyday travel options.</p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Royal SafeTravels. All rights reserved.
+  </footer>
+</body>
+</html>

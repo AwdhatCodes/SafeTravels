@@ -1,0 +1,3457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Ride - Royal Safe Travels</title>
+    <link href="css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/aos.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        :root {
+            --bg-color: #000000;
+            --second-bg-color: #111111;
+            --text-color: #fff;
+            --main-color: #00FF00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            list-style: none;
+            border: none;
+            outline: none;
+            scroll-behavior: smooth;
+            font-family: -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem 9%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--main-color);
+        }
+
+        .logo {
+            font-size: 3rem;
+            color: var(--text-color);
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+        }
+
+        .logo span {
+            color: var(--main-color);
+        }
+
+        .navbar {
+            display: flex;
+        }
+
+        .navbar a {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-left: 4rem;
+            transition: all 0.5s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .navbar a:hover,
+        .navbar a.active {
+            color: var(--main-color);
+            border-bottom: 3px solid var(--main-color);
+        }
+
+        .booking-section {
+            padding: 10rem 8% 2rem;
+            min-height: 100vh;
+            background: var(--bg-color);
+        }
+
+        .booking-content {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .booking-content h1 {
+            text-align: center;
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .booking-content h1 span {
+            color: var(--main-color);
+        }
+
+        .map-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 16px;
+            border: 1px solid var(--main-color);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            overflow: hidden;
+            background: var(--second-bg-color);
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .booking-form {
+            background: var(--second-bg-color);
+            padding: 3rem;
+            border-radius: 16px;
+            border: 1px solid var(--main-color);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.6rem;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--main-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            box-shadow: 0 0 10px var(--main-color);
+        }
+
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .amenity-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem;
+            background: var(--bg-color);
+            border: 1px solid var(--main-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .amenity-option:hover {
+            box-shadow: 0 0 10px var(--main-color);
+            transform: translateY(-2px);
+        }
+
+        .price-display {
+            text-align: center;
+            font-size: 2.4rem;
+            color: var(--main-color);
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--main-color);
+            font-weight: 600;
+        }
+
+        .confirm-btn {
+            display: block;
+            width: 100%;
+            padding: 1.5rem;
+            font-size: 1.8rem;
+            background: var(--main-color);
+            color: var(--bg-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .confirm-btn:hover {
+            box-shadow: 0 0 20px var(--main-color);
+            transform: translateY(-2px);
+        }
+
+        .info-box {
+            background: var(--second-bg-color);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--main-color);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            margin: 2rem auto;
+            width: 100%;
+        }
+
+        .info-box p {
+            font-size: 1.6rem;
+            margin: 1rem 0;
+            color: var(--text-color);
+        }
+
+        .info-box .distance {
+            color: var(--main-color);
+            font-weight: bold;
+        }
+
+        footer {
+            background: var(--second-bg-color);
+            padding: 3rem 8%;
+            border-top: 1px solid var(--main-color);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            font-size: 2rem;
+            color: var(--main-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section p {
+            font-size: 1.6rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            font-size: 2.4rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--main-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--main-color);
+        }
+
+        .footer-bottom p {
+            font-size: 1.6rem;
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .amenities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .booking-content h1 {
+                font-size: 3.6rem;
+            }
+        }
+
+        .booking-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--second-bg-color);
+            border-radius: 16px;
+            border: 1px solid var(--main-color);
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            opacity: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-color);
+            border: 2px solid var(--main-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--main-color);
+        }
+
+        .step.active .step-number {
+            background: var(--main-color);
+            color: var(--bg-color);
+        }
+
+        .step-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            font-size: 1.4rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .map-control-btn {
+            padding: 0.8rem 1.2rem;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--main-color);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .map-control-btn:hover {
+            background: var(--main-color);
+            color: var(--bg-color);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            font-size: 2rem;
+            color: var(--main-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .destination-input-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .destination-input-group input {
+            flex: 1;
+        }
+
+        .current-location-btn {
+            padding: 1.2rem;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--main-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .current-location-btn:hover {
+            background: var(--main-color);
+            color: var(--bg-color);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .back-btn {
+            padding: 1.2rem 2rem;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--main-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--main-color);
+            color: var(--bg-color);
+        }
+
+        .next-btn {
+            padding: 1.2rem 2rem;
+            background: var(--main-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            box-shadow: 0 0 20px var(--main-color);
+            transform: translateY(-2px);
+        }
+
+        .booking-summary {
+            background: var(--bg-color);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--main-color);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .summary-item .label {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .summary-item .value {
+            color: var(--main-color);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .booking-steps {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .step {
+                width: 100%;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            .form-buttons button {
+                width: 100%;
+            }
+        }
+
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 1rem;
+            color: var(--main-color);
+            font-size: 2rem;
+        }
+
+        .input-with-icon input {
+            padding-left: 4rem;
+        }
+
+        .recent-destinations {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+        }
+
+        .recent-destinations h4 {
+            color: var(--main-color);
+            margin-bottom: 1rem;
+        }
+
+        .recent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .recent-item {
+            padding: 1rem;
+            background: var(--second-bg-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .recent-item:hover {
+            background: var(--main-color);
+            color: var(--bg-color);
+        }
+
+        .vehicle-options {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .vehicle-category h4 {
+            color: var(--main-color);
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .vehicle-card {
+            background: var(--bg-color);
+            border: 1px solid var(--main-color);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .vehicle-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .vehicle-info {
+            padding: 1rem;
+        }
+
+        .vehicle-info h5 {
+            color: var(--main-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .vehicle-info p {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            color: var(--main-color);
+            font-weight: 600;
+        }
+
+        .security-options {
+            margin-top: 2rem;
+        }
+
+        .security-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .security-card {
+            background: var(--bg-color);
+            border: 1px solid var(--main-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .security-card:hover {
+            background: var(--main-color);
+            color: var(--bg-color);
+        }
+
+        .security-card i {
+            font-size: 3rem;
+            color: var(--main-color);
+            margin-bottom: 1rem;
+        }
+
+        .security-card:hover i {
+            color: var(--bg-color);
+        }
+
+        .booking-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .summary-map {
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .summary-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .summary-section {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .summary-section h4 {
+            color: var(--main-color);
+            margin-bottom: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-item.total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--main-color);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .booking-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .vehicle-cards,
+            .security-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .booked-vehicle-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--second-bg-color);
+            border-top: 1px solid var(--main-color);
+            padding: 1.5rem;
+            z-index: 1000;
+        }
+
+        .booked-vehicle-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .vehicle-status {
+            background: var(--bg-color);
+            border: 1px solid var(--main-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-header h3 {
+            color: var(--main-color);
+            font-size: 2rem;
+        }
+
+        .status-badge {
+            background: var(--main-color);
+            color: var(--bg-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .vehicle-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .driver-details {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .driver-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--main-color);
+        }
+
+        .driver-info h4 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .driver-info p {
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rating i {
+            color: #FFD700;
+        }
+
+        .trip-details {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .detail-item i {
+            font-size: 2rem;
+            color: var(--main-color);
+        }
+
+        .detail-item .label {
+            display: block;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .contact-driver,
+        .cancel-ride {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.6rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .contact-driver {
+            background: var(--main-color);
+            color: var(--bg-color);
+            border: none;
+        }
+
+        .cancel-ride {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--main-color);
+        }
+
+        .contact-driver:hover {
+            box-shadow: 0 0 20px var(--main-color);
+            transform: translateY(-2px);
+        }
+
+        .cancel-ride:hover {
+            background: var(--main-color);
+            color: var(--bg-color);
+        }
+
+        @media (max-width: 768px) {
+            .vehicle-info {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .trip-details {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .vehicle-card {
+            background: var(--bg-color);
+            border: 1px solid var(--main-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .vehicle-card.active {
+            border: 2px solid var(--main-color);
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .vehicle-info h5 {
+            color: var(--main-color);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .vehicle-details {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            font-size: 1.4rem;
+        }
+
+        .vehicle-details span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .amenity {
+            background: var(--second-bg-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .price {
+            color: var(--main-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .no-vehicles {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        .vehicle-popup {
+            padding: 1rem;
+            min-width: 200px;
+        }
+
+        .vehicle-card {
+            background: var(--bg-color);
+            border: 1px solid var(--main-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .vehicle-card.active {
+            border: 2px solid var(--main-color);
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .vehicle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-header h5 {
+            color: var(--main-color);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .vehicle-type {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .vehicle-type.standard {
+            background: rgba(255, 165, 0, 0.2);
+            color: #FFA500;
+        }
+
+        .vehicle-type.premium {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00FF00;
+        }
+
+        .vehicle-type.luxury {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+
+        .vehicle-details {
+            margin: 1rem 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+        }
+
+        .detail-row span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-row i {
+            color: var(--main-color);
+        }
+
+        .amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .amenity {
+            background: var(--second-bg-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .amenity i {
+            color: var(--main-color);
+        }
+
+        .vehicle-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.4rem;
+            color: var(--main-color);
+            margin-top: 1rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--main-color);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .no-vehicles {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-style: italic;
+            background: var(--second-bg-color);
+            border-radius: 8px;
+        }
+
+        .vehicle-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .vehicle-id {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .vehicle-card.active .vehicle-id {
+            color: var(--main-color);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="home.html" class="logo">Royal <span>SafeTravel</span></a>
+        <nav class="navbar">
+            <a href="home.html">Home</a>
+            <a href="book-a-ride.html" class="active">Book a Ride</a>
+            <a href="home.html#services">Services</a>
+        </nav>
+    </header>
+
+    <section class="booking-section" data-aos="fade-up">
+        <div class="booking-content">
+            <h1 data-aos="fade-up">Book Your Ride</h1>
+
+            <!-- Map container -->
+            <div class="map-container" data-aos="fade-up">
+                <div id="map"></div>
+                <div class="map-controls">
+                    <button onclick="centerOnUser()" class="map-control-btn">
+                        <i class='bx bx-current-location'></i>
+                        My Location
+                    </button>
+                    <button onclick="refreshVehicles()" class="map-control-btn">
+                        <i class='bx bx-refresh'></i>
+                        Refresh Vehicles
+                    </button>
+                </div>
+            </div>
+
+            <!-- Booking Steps -->
+            <div class="booking-steps">
+                <div class="step active" id="step-1">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Choose Vehicle</h3>
+                        <p>Select your preferred vehicle type</p>
+                    </div>
+                </div>
+                <div class="step" id="step-2">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Enter Destination</h3>
+                        <p>Where would you like to go?</p>
+                    </div>
+                </div>
+                <div class="step" id="step-3">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Review & Book</h3>
+                        <p>Review details and confirm booking</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form to choose ride details -->
+            <div class="booking-form" data-aos="fade-up">
+                <!-- Step 1: Vehicle Selection -->
+                <div class="form-section" id="vehicle-selection">
+                    <h3>Choose Your Vehicle</h3>
+                    
+                    <div class="vehicle-options">
+                        <div class="vehicle-category">
+                            <h4>Standard</h4>
+                            <div class="vehicle-cards" id="standard-vehicles">
+                                <!-- Will be populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="vehicle-category">
+                            <h4>Premium</h4>
+                            <div class="vehicle-cards" id="premium-vehicles">
+                                <!-- Will be populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="vehicle-category">
+                            <h4>Luxury</h4>
+                            <div class="vehicle-cards" id="luxury-vehicles">
+                                <!-- Will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="security-options">
+                        <h4>Security Options</h4>
+                        <div class="security-cards">
+                            <div class="security-card" onclick="toggleSecurity('none')">
+                                <i class='bx bx-shield'></i>
+                                <h5>No Security</h5>
+                                <p>Standard ride without security</p>
+                            </div>
+                            <div class="security-card" onclick="toggleSecurity('standard')">
+                                <i class='bx bx-shield-quarter'></i>
+                                <h5>Standard Security</h5>
+                                <p>Basic security detail</p>
+                                <span class="price">+$40</span>
+                            </div>
+                            <div class="security-card" onclick="toggleSecurity('premium')">
+                                <i class='bx bx-shield-half'></i>
+                                <h5>Premium Security</h5>
+                                <p>Enhanced security detail</p>
+                                <span class="price">+$80</span>
+                            </div>
+                            <div class="security-card" onclick="toggleSecurity('vip')">
+                                <i class='bx bx-shield'></i>
+                                <h5>VIP Security</h5>
+                                <p>Full security detail</p>
+                                <span class="price">+$150</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button class="next-btn" onclick="nextStep(1)" disabled>Next: Enter Destination</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Destination -->
+                <div class="form-section" id="destination-selection" style="display: none;">
+                    <h3>Where to?</h3>
+                    <div class="destination-input-group">
+                        <div class="form-group">
+                            <label for="destination">Enter your destination</label>
+                            <div class="input-with-icon">
+                                <i class='bx bx-map'></i>
+                                <input type="text" id="destination" placeholder="Enter your destination" required>
+                                <button onclick="useCurrentLocation()" class="current-location-btn" title="Use Current Location">
+                                    <i class='bx bx-current-location'></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-destinations">
+                        <h4>Recent Destinations</h4>
+                        <div class="recent-list" id="recent-destinations-list">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button class="back-btn" onclick="prevStep(2)">Back</button>
+                        <button class="next-btn" onclick="nextStep(2)" disabled>Next: Review & Book</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Review & Book -->
+                <div class="form-section" id="booking-confirmation" style="display: none;">
+                    <h3>Review Your Booking</h3>
+                    
+                    <div class="booking-summary">
+                        <div class="summary-map">
+                            <div id="summary-map"></div>
+                        </div>
+                        
+                        <div class="summary-details">
+                            <div class="summary-section">
+                                <h4>Journey Details</h4>
+                                <div class="summary-item">
+                                    <span class="label">From</span>
+                                    <span class="value" id="summary-from">Current Location</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">To</span>
+                                    <span class="value" id="summary-to"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Distance</span>
+                                    <span class="value" id="summary-distance"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Estimated Time</span>
+                                    <span class="value" id="summary-time"></span>
+                                </div>
+                            </div>
+
+                            <div class="summary-section">
+                                <h4>Vehicle Details</h4>
+                                <div class="summary-item">
+                                    <span class="label">Vehicle Type</span>
+                                    <span class="value" id="summary-vehicle"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Security</span>
+                                    <span class="value" id="summary-security">None</span>
+                                </div>
+                            </div>
+
+                            <div class="summary-section">
+                                <h4>Price Details</h4>
+                                <div class="summary-item">
+                                    <span class="label">Base Fare</span>
+                                    <span class="value" id="summary-base-price"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Security Fee</span>
+                                    <span class="value" id="summary-security-price">$0</span>
+                                </div>
+                                <div class="summary-item total">
+                                    <span class="label">Total</span>
+                                    <span class="value" id="summary-total-price"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button class="back-btn" onclick="prevStep(3)">Back</button>
+                        <button class="confirm-btn" onclick="confirmBooking()" disabled>Confirm Booking</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Royal Safe Travels</h3>
+                <p>Your trusted partner in safe and luxurious transportation.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@royalsafetravels.com</p>
+                <p>Phone: +1 (555) 123-4567</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class='bx bxl-facebook'></i></a>
+                    <a href="#"><i class='bx bxl-twitter'></i></a>
+                    <a href="#"><i class='bx bxl-instagram'></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Royal Safe Travels. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Include Leaflet.js JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Include AOS JS -->
+    <script src="js/aos.js"></script>
+
+    <script>
+        // Initialize the map
+        let map;
+        let currentRouteDistance = 0;
+        let userLat, userLng;
+        let selectedVehicle = null;
+        let selectedBodyguard = null;
+        let vehicleMarkers = [];
+        let bookedVehicleMarker = null;
+        let routeLine = null;
+        let isRideBooked = false;
+        let rideUpdateInterval = null;
+        let arrivalNotificationSent = false;
+        let driverInfo = null;
+        let rideStatus = {
+            pickup: false,
+            enRoute: false,
+            arriving: false,
+            arrived: false
+        };
+
+        // Create custom icons
+        const userIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+        });
+
+        const standardVehicleIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+        });
+
+        const premiumVehicleIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+        });
+
+        const luxuryVehicleIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+        });
+
+        // Function to initialize map
+        function initMap() {
+            map = L.map('map').setView([51.505, -0.09], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        // Function to generate random nearby coordinates
+        function getRandomNearbyLocation(baseLat, baseLng, maxDistance = 0.02) {
+            const lat = baseLat + (Math.random() - 0.5) * maxDistance;
+            const lng = baseLng + (Math.random() - 0.5) * maxDistance;
+            return { lat, lng };
+        }
+
+        // Function to generate random vehicle data
+        function generateRandomVehicles(baseLat, baseLng, count = 15) {
+            const vehicles = [];
+            const types = ['Standard', 'Premium', 'Luxury'];
+            const subtypes = {
+                'Standard': ['Sedan', 'Hatchback', 'Compact SUV'],
+                'Premium': ['Premium Sedan', 'Premium SUV', 'Executive Car'],
+                'Luxury': ['Luxury Van', 'Executive Sedan', 'Luxury SUV']
+            };
+            const amenities = ['wifi', 'refreshments', 'child-seat', 'privacy'];
+
+            // Generate a fixed number of vehicles for each type
+            const vehiclesPerType = Math.floor(count / types.length);
+            let vehicleId = 1;
+
+            types.forEach(type => {
+                for (let i = 0; i < vehiclesPerType; i++) {
+                    const subtype = subtypes[type][Math.floor(Math.random() * subtypes[type].length)];
+                    const location = getRandomNearbyLocation(baseLat, baseLng, 0.05);
+                    const isAvailable = Math.random() > 0.2;
+                    const eta = Math.floor(Math.random() * 15) + 1;
+                    
+                    const vehicleAmenities = [];
+                    if (type !== 'Standard') {
+                        const numAmenities = Math.floor(Math.random() * 3) + 1;
+                        for (let j = 0; j < numAmenities; j++) {
+                            const amenity = amenities[Math.floor(Math.random() * amenities.length)];
+                            if (!vehicleAmenities.includes(amenity)) {
+                                vehicleAmenities.push(amenity);
+                            }
+                        }
+                    }
+
+                    vehicles.push({
+                        id: `V${String(vehicleId).padStart(3, '0')}`,
+                        type,
+                        subtype,
+                        lat: location.lat,
+                        lng: location.lng,
+                        price: type === 'Standard' ? 50 : type === 'Premium' ? 80 : 150,
+                        seats: type === 'Standard' ? 4 : type === 'Premium' ? 6 : 8,
+                        amenities: vehicleAmenities,
+                        isAvailable,
+                        eta,
+                        lastUpdated: new Date()
+                    });
+                    vehicleId++;
+                }
+            });
+
+            return vehicles;
+        }
+
+        // Function to update vehicle status
+        function updateVehicleStatus() {
+            vehicleMarkers.forEach(marker => {
+                const vehicle = marker.vehicle;
+                // Randomly update availability (simulating real-time changes)
+                if (Math.random() > 0.95) { // 5% chance of status change
+                    vehicle.isAvailable = !vehicle.isAvailable;
+                    vehicle.eta = Math.floor(Math.random() * 15) + 1;
+                    vehicle.lastUpdated = new Date();
+                    updateVehicleMarker(marker);
+                }
+            });
+        }
+
+        // Function to update vehicle marker
+        function updateVehicleMarker(marker) {
+            const vehicle = marker.vehicle;
+            const distance = calculateDistance(userLat, userLng, vehicle.lat, vehicle.lng);
+            
+            const statusColor = vehicle.isAvailable ? 'green' : 'red';
+            const statusText = vehicle.isAvailable ? 'Available' : 'Unavailable';
+            
+            const amenitiesList = vehicle.amenities.length > 0 
+                ? `<br>Amenities: ${vehicle.amenities.join(', ')}`
+                : '';
+
+            const bookingButton = vehicle.isAvailable 
+                ? `<button class="book-now-btn" onclick="bookVehicle('${vehicle.id}')">Book Now</button>`
+                : '';
+
+            marker.setPopupContent(
+                `<div class="vehicle-popup">
+                    <b>Vehicle: ${vehicle.id}</b><br>
+                    Type: ${vehicle.type} ${vehicle.subtype}<br>
+                    Seats: ${vehicle.seats}<br>
+                    Base Price: $${vehicle.price}<br>
+                    Distance: ${distance} km<br>
+                    Status: <span style="color: ${statusColor}">${statusText}</span><br>
+                    ETA: ${vehicle.eta} minutes
+                    ${amenitiesList}
+                    ${bookingButton}
+                </div>`
+            );
+
+            // Update marker icon based on availability
+            let icon;
+            if (!vehicle.isAvailable) {
+                icon = L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34]
+                });
+            } else {
+                switch(vehicle.type) {
+                    case "Premium":
+                        icon = premiumVehicleIcon;
+                        break;
+                    case "Luxury":
+                        icon = luxuryVehicleIcon;
+                        break;
+                    default:
+                        icon = standardVehicleIcon;
+                }
+            }
+            marker.setIcon(icon);
+        }
+
+        // Function to book vehicle directly from map
+        function bookVehicle(vehicleId) {
+            const vehicle = vehicleMarkers.find(marker => marker.vehicle.id === vehicleId)?.vehicle;
+            if (!vehicle) return;
+
+            // Show destination input modal
+            const modal = document.createElement('div');
+            modal.className = 'booking-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Enter Your Destination</h3>
+                    <div class="destination-options">
+                        <input type="text" id="modal-destination" placeholder="Enter your destination" class="modal-input">
+                        <button onclick="useCurrentLocation('${vehicleId}')" class="current-location-btn">
+                            <i class='bx bx-current-location'></i>
+                            Use Current Location
+                        </button>
+                    </div>
+                    <div class="modal-buttons">
+                        <button onclick="confirmDirectBooking('${vehicleId}')" class="confirm-btn">Confirm Booking</button>
+                        <button onclick="closeModal()" class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Function to use current location
+        function useCurrentLocation(vehicleId) {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser');
+                return;
+            }
+
+            const modal = document.querySelector('.booking-modal');
+            const destinationInput = document.getElementById('modal-destination');
+            destinationInput.value = 'Getting current location...';
+            destinationInput.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    // Reverse geocode to get address
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const address = data.display_name;
+                            destinationInput.value = address;
+                            destinationInput.disabled = false;
+                            
+                            // Automatically confirm booking with current location
+                            confirmDirectBooking(vehicleId, latitude, longitude);
+                        })
+                        .catch(error => {
+                            console.error('Error getting address:', error);
+                            destinationInput.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                            destinationInput.disabled = false;
+                            
+                            // Automatically confirm booking with coordinates
+                            confirmDirectBooking(vehicleId, latitude, longitude);
+                        });
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    alert('Unable to get your current location. Please enter destination manually.');
+                    destinationInput.value = '';
+                    destinationInput.disabled = false;
+                }
+            );
+        }
+
+        // Update confirmDirectBooking function to accept coordinates
+        function confirmDirectBooking(vehicleId, destLat, destLng) {
+            const destination = document.getElementById('modal-destination').value;
+            if (!destination) {
+                alert('Please enter a destination');
+                return;
+            }
+
+            const vehicle = vehicleMarkers.find(marker => marker.vehicle.id === vehicleId)?.vehicle;
+            if (!vehicle) return;
+
+            // Use provided coordinates or generate random ones
+            const destinationLat = destLat || userLat + (Math.random() - 0.5) * 0.1;
+            const destinationLng = destLng || userLng + (Math.random() - 0.5) * 0.1;
+
+            // Calculate distance
+            currentRouteDistance = calculateDistance(vehicle.lat, vehicle.lng, destinationLat, destinationLng);
+
+            // Show booking confirmation
+            const bookingDetails = `
+Booking Confirmed!
+
+Destination: ${destination}
+Distance: ${currentRouteDistance} km
+Vehicle: ${vehicle.type} ${vehicle.subtype}
+Base Price: $${vehicle.price}
+${vehicle.amenities.length > 0 ? `Amenities: ${vehicle.amenities.join(', ')}` : ''}
+
+Thank you for choosing Royal Safe Travels!`;
+
+            alert(bookingDetails);
+            closeModal();
+            
+            // Start ride tracking
+            startRideTracking(vehicle, destinationLat, destinationLng);
+        }
+
+        // Function to close modal
+        function closeModal() {
+            const modal = document.querySelector('.booking-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Function to add vehicles to the map
+        function addVehiclesToMap() {
+            // Clear existing markers
+            vehicleMarkers.forEach(marker => map.removeLayer(marker));
+            vehicleMarkers = [];
+
+            // Generate new vehicles
+            const vehicles = generateRandomVehicles(userLat, userLng);
+
+            vehicles.forEach(vehicle => {
+                let icon;
+                if (!vehicle.isAvailable) {
+                    icon = L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34]
+                    });
+                } else {
+                    switch(vehicle.type) {
+                        case "Premium":
+                            icon = premiumVehicleIcon;
+                            break;
+                        case "Luxury":
+                            icon = luxuryVehicleIcon;
+                            break;
+                        default:
+                            icon = standardVehicleIcon;
+                    }
+                }
+
+                const marker = L.marker([vehicle.lat, vehicle.lng], { icon: icon }).addTo(map);
+                marker.vehicle = vehicle; // Store vehicle data in marker
+                vehicleMarkers.push(marker);
+
+                const distance = calculateDistance(userLat, userLng, vehicle.lat, vehicle.lng);
+                const statusColor = vehicle.isAvailable ? 'green' : 'red';
+                const statusText = vehicle.isAvailable ? 'Available' : 'Unavailable';
+                
+                const amenitiesList = vehicle.amenities.length > 0 
+                    ? `<br>Amenities: ${vehicle.amenities.join(', ')}`
+                    : '';
+
+                marker.bindPopup(
+                    `<b>Vehicle: ${vehicle.id}</b><br>` +
+                    `Type: ${vehicle.type} ${vehicle.subtype}<br>` +
+                    `Seats: ${vehicle.seats}<br>` +
+                    `Base Price: $${vehicle.price}<br>` +
+                    `Distance: ${distance} km<br>` +
+                    `Status: <span style="color: ${statusColor}">${statusText}</span><br>` +
+                    `ETA: ${vehicle.eta} minutes` +
+                    amenitiesList
+                );
+
+                marker.on('click', function() {
+                    if (vehicle.isAvailable) {
+                        selectedVehicle = vehicle;
+                        showInfoBox(vehicle, distance, 'vehicle');
+                        updateVehicleSelection(vehicle);
+                    } else {
+                        alert('This vehicle is currently unavailable. Please select another vehicle.');
+                    }
+                });
+            });
+
+            // Update vehicle cards
+            updateVehicleCards();
+
+            // Start periodic updates
+            setInterval(updateVehicleStatus, 5000); // Update every 5 seconds
+        }
+
+        // Function to handle location success
+        function onLocationSuccess(position) {
+            userLat = position.coords.latitude;
+            userLng = position.coords.longitude;
+
+            // Center map on the user's location
+            map.setView([userLat, userLng], 13);
+
+            // Add the red marker for the user's location
+            const userMarker = L.marker([userLat, userLng], { icon: userIcon }).addTo(map);
+            userMarker.bindPopup("<b>Your Location</b>").openPopup();
+
+            // Add vehicles to the map
+            addVehiclesToMap();
+        }
+
+        // Function to handle location error
+        function onLocationError() {
+            console.log("Unable to retrieve your location");
+            // Default to London coordinates if geolocation fails
+            onLocationSuccess({ coords: { latitude: 51.505, longitude: -0.09 } });
+        }
+
+        // Initialize map when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+
+        // Request user's location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError);
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+                onLocationSuccess({ coords: { latitude: 51.505, longitude: -0.09 } });
+            }
+        });
+
+        // Calculate distance between two lat/lng points
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371; // Radius of Earth in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = R * c; // Distance in km
+            return distance.toFixed(2); // Return distance with 2 decimals
+        }
+
+        // Function to update vehicle selection in the form
+        function updateVehicleSelection(vehicle) {
+            selectedVehicle = vehicle;
+            const vehicleSelect = document.getElementById('vehicle');
+            const premiumOptions = document.getElementById('premium-options');
+            
+            // Update vehicle type
+            vehicleSelect.value = vehicle.type.toLowerCase();
+            
+            // Show premium options if applicable
+            if (vehicle.type === 'Premium' || vehicle.type === 'Luxury') {
+                premiumOptions.style.display = 'block';
+                const premiumVehicleSelect = document.getElementById('premium-vehicle');
+                premiumVehicleSelect.value = vehicle.subtype.toLowerCase().replace(' ', '-');
+            } else {
+                premiumOptions.style.display = 'none';
+            }
+
+            // Update price and enable next button
+            calculatePrice();
+            document.querySelector('#vehicle-selection .next-btn').disabled = false;
+            
+            // Show success message
+            showToast(`Selected ${vehicle.type} ${vehicle.subtype}`, 'success');
+        }
+
+        // Calculate distance to destination
+        function calculateDistanceToDestination() {
+            const destination = document.getElementById('destination').value;
+            if (!destination || !userLat || !userLng) {
+                showToast('Please allow location access and enter a destination', 'error');
+                return;
+            }
+
+            // For demo purposes, we'll use a random distance between 5 and 50 km
+            currentRouteDistance = Math.floor(Math.random() * 45) + 5;
+            document.getElementById('distance').value = currentRouteDistance.toFixed(1) + ' km';
+            
+            // Update price and enable next button
+            calculatePrice();
+            document.querySelector('#destination-selection .next-btn').disabled = false;
+        }
+
+        // Update vehicle options
+        function updateVehicleOptions() {
+            const vehicleType = document.getElementById('vehicle').value;
+            const premiumOptions = document.getElementById('premium-options');
+            
+            if (vehicleType === 'premium' || vehicleType === 'luxury') {
+                premiumOptions.style.display = 'block';
+            } else {
+                premiumOptions.style.display = 'none';
+                // Reset premium vehicle selection
+                document.getElementById('premium-vehicle').value = 'premium-sedan';
+            }
+            
+            calculatePrice();
+        }
+
+        // Update bodyguard options
+        function updateBodyguardOptions() {
+            const bodyguard = document.getElementById('bodyguard').value;
+            const bodyguardOptions = document.getElementById('bodyguard-options');
+            
+            if (bodyguard === 'yes') {
+                bodyguardOptions.style.display = 'block';
+            } else {
+                bodyguardOptions.style.display = 'none';
+                // Reset bodyguard selections
+                document.getElementById('bodyguard-type').value = 'standard';
+                document.getElementById('bodyguard-count').value = '1';
+                document.querySelectorAll('input[name="bodyguard-features"]').forEach(cb => cb.checked = false);
+            }
+            
+            calculatePrice();
+        }
+
+        // Calculate the price of the ride
+        function calculatePrice() {
+            if (!currentRouteDistance) {
+                document.getElementById("price").innerText = "Please enter a destination to calculate price";
+                return;
+            }
+
+            const vehicle = document.getElementById("vehicle").value;
+            const bodyguard = document.getElementById("bodyguard").value;
+            const premiumVehicle = document.getElementById("premium-vehicle")?.value;
+            const amenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked')).map(cb => cb.value);
+
+            let basePrice = 50; // Base price
+
+            // Vehicle type pricing
+            if (vehicle === "premium") {
+                basePrice += 30;
+                if (premiumVehicle === "premium-suv") basePrice += 20;
+                if (premiumVehicle === "luxury-van") basePrice += 40;
+            } else if (vehicle === "luxury") {
+                basePrice += 50;
+                if (premiumVehicle === "premium-suv") basePrice += 30;
+                if (premiumVehicle === "luxury-van") basePrice += 50;
+            }
+
+            // Amenities pricing
+            amenities.forEach(amenity => {
+                switch(amenity) {
+                    case 'wifi': basePrice += 5; break;
+                    case 'refreshments': basePrice += 10; break;
+                    case 'child-seat': basePrice += 8; break;
+                    case 'privacy': basePrice += 15; break;
+                }
+            });
+
+            // Bodyguard pricing
+            if (bodyguard === "yes") {
+                const bodyguardType = document.getElementById("bodyguard-type").value;
+                const bodyguardCount = parseInt(document.getElementById("bodyguard-count").value);
+                const bodyguardFeatures = Array.from(document.querySelectorAll('input[name="bodyguard-features"]:checked')).map(cb => cb.value);
+
+                // Base bodyguard price
+                switch(bodyguardType) {
+                    case "standard":
+                        basePrice += 40 * bodyguardCount;
+                        break;
+                    case "premium":
+                        basePrice += 60 * bodyguardCount;
+                        break;
+                    case "vip":
+                        basePrice += 100 * bodyguardCount;
+                        break;
+                }
+
+                // Additional features pricing
+                bodyguardFeatures.forEach(feature => {
+                    switch(feature) {
+                        case 'armed': basePrice += 30 * bodyguardCount; break;
+                        case 'trained': basePrice += 20 * bodyguardCount; break;
+                        case 'vehicle': basePrice += 50; break;
+                        case 'communication': basePrice += 15 * bodyguardCount; break;
+                    }
+                });
+            }
+
+            // Calculate total price based on distance
+            const pricePerKm = basePrice / 10; // Base price is for 10km
+            const totalPrice = (basePrice + (pricePerKm * (currentRouteDistance - 10))).toFixed(2);
+
+            document.getElementById("price").innerText = `Estimated Price: $${totalPrice} (${currentRouteDistance} km)`;
+        }
+
+        // Function to generate random driver info
+        function generateDriverInfo() {
+            const firstNames = ['John', 'Sarah', 'Michael', 'Emma', 'David', 'Lisa'];
+            const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia'];
+            const carModels = ['Toyota Camry', 'Honda Accord', 'BMW 5 Series', 'Mercedes E-Class', 'Audi A6'];
+            
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const carModel = carModels[Math.floor(Math.random() * carModels.length)];
+            const rating = (4 + Math.random()).toFixed(1);
+            const phone = `+1${Math.floor(Math.random() * 900000000) + 1000000000}`;
+            const photo = `https://i.pravatar.cc/150?u=${Math.random()}`;
+            
+            return {
+                name: `${firstName} ${lastName}`,
+                carModel,
+                rating,
+                phone,
+                photo
+            };
+        }
+
+        // Function to show notification with sound
+        function showNotification(title, message, playSound = true) {
+            if (!("Notification" in window)) {
+                alert(message);
+                return;
+            }
+
+            // Play notification sound
+            if (playSound) {
+                const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                audio.play();
+            }
+
+            if (Notification.permission === "granted") {
+                new Notification(title, {
+                    body: message,
+                    icon: 'https://i.pravatar.cc/150?u=notification',
+                    badge: 'https://i.pravatar.cc/150?u=badge',
+                    tag: 'ride-update'
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification(title, {
+                            body: message,
+                            icon: 'https://i.pravatar.cc/150?u=notification',
+                            badge: 'https://i.pravatar.cc/150?u=badge',
+                            tag: 'ride-update'
+                        });
+                    }
+                });
+            }
+        }
+
+        // Function to update ride status
+        function updateRideStatus(progress, remainingTime) {
+            const statusElement = document.getElementById('ride-status');
+            const progressPercent = Math.min(progress * 100, 100);
+            
+            // Update ride status based on progress
+            if (progress > 0.1 && !rideStatus.pickup) {
+                rideStatus.pickup = true;
+                showNotification(
+                    "Driver Picked Up",
+                    `${driverInfo.name} has picked up your ride. You're on your way!`
+                );
+            }
+            
+            if (progress > 0.3 && !rideStatus.enRoute) {
+                rideStatus.enRoute = true;
+                showNotification(
+                    "En Route",
+                    `${driverInfo.name} is on the way to your destination.`
+                );
+            }
+            
+            if (progress > 0.8 && !rideStatus.arriving) {
+                rideStatus.arriving = true;
+                showNotification(
+                    "Almost There",
+                    `${driverInfo.name} is approaching your destination.`
+                );
+            }
+            
+            if (progress > 0.95 && !rideStatus.arrived) {
+                rideStatus.arrived = true;
+                showNotification(
+                    "Arriving Now",
+                    `${driverInfo.name} is arriving at your location in 1 minute!`
+                );
+            }
+
+            // Calculate estimated arrival time
+            const arrivalTime = new Date(Date.now() + remainingTime * 1000);
+            const formattedArrivalTime = arrivalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            statusElement.innerHTML = `
+                <div class="status-header">
+                    <img src="${driverInfo.photo}" alt="Driver" class="driver-photo">
+                    <div class="driver-info">
+                        <h4>${driverInfo.name}</h4>
+                        <p>${driverInfo.carModel}</p>
+                        <div class="driver-rating">
+                            <i class='bx bxs-star'></i>
+                            <span>${driverInfo.rating}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="status-progress">
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${progressPercent}%"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span class="${progress > 0.1 ? 'active' : ''}">Pickup</span>
+                        <span class="${progress > 0.3 ? 'active' : ''}">En Route</span>
+                        <span class="${progress > 0.8 ? 'active' : ''}">Arriving</span>
+                    </div>
+                </div>
+                <div class="status-details">
+                    <div class="status-item">
+                        <i class='bx bx-time'></i>
+                        <div class="status-text">
+                            <span class="label">ETA</span>
+                            <span class="value">${Math.ceil(remainingTime / 60)} minutes</span>
+                            <span class="sub-text">Arriving at ${formattedArrivalTime}</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <i class='bx bx-map'></i>
+                        <div class="status-text">
+                            <span class="label">Distance</span>
+                            <span class="value">${calculateDistance(currentLat, currentLng, endLat, endLng)} km</span>
+                            <span class="sub-text">Remaining</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <i class='bx bx-phone'></i>
+                        <div class="status-text">
+                            <span class="label">Driver</span>
+                            <span class="value">${driverInfo.phone}</span>
+                            <span class="sub-text">Tap to call</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="status-actions">
+                    <button onclick="contactDriver()" class="action-btn">
+                        <i class='bx bx-phone'></i>
+                        Contact Driver
+                    </button>
+                    <button onclick="cancelRide()" class="action-btn cancel">
+                        <i class='bx bx-x'></i>
+                        Cancel Ride
+                    </button>
+                </div>
+            `;
+        }
+
+        // Function to contact driver
+        function contactDriver() {
+            alert(`Calling driver ${driverInfo.name} at ${driverInfo.phone}`);
+        }
+
+        // Function to cancel ride
+        function cancelRide() {
+            if (confirm('Are you sure you want to cancel this ride?')) {
+                if (rideUpdateInterval) {
+                    clearInterval(rideUpdateInterval);
+                }
+                showNotification(
+                    "Ride Cancelled",
+                    "Your ride has been cancelled. We hope to serve you again soon!"
+                );
+                completeRide();
+            }
+        }
+
+        // Function to simulate vehicle movement
+        function simulateVehicleMovement(startLat, startLng, endLat, endLng, duration = 300000) {
+            const startTime = Date.now();
+            const endTime = startTime + duration;
+            driverInfo = generateDriverInfo();
+            arrivalNotificationSent = false;
+            
+            function updatePosition() {
+                const now = Date.now();
+                const progress = Math.min((now - startTime) / duration, 1);
+                
+                // Calculate current position using linear interpolation
+                const currentLat = startLat + (endLat - startLat) * progress;
+                const currentLng = startLng + (endLng - startLng) * progress;
+                
+                // Update marker position
+                if (bookedVehicleMarker) {
+                    bookedVehicleMarker.setLatLng([currentLat, currentLng]);
+                    
+                    // Update ride status
+                    const remainingTime = Math.max(0, (endTime - now) / 1000);
+                    updateRideStatus(progress, remainingTime);
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updatePosition);
+                } else {
+                    // Ride completed
+                    showNotification(
+                        "Ride Completed",
+                        `Thank you for choosing Royal Safe Travels! Your ride with ${driverInfo.name} has been completed.`
+                    );
+                    completeRide();
+                }
+            }
+            
+            updatePosition();
+        }
+
+        // Function to complete the ride
+        function completeRide() {
+            if (rideUpdateInterval) {
+                clearInterval(rideUpdateInterval);
+            }
+            
+            // Show completion message
+            const rideStatus = document.getElementById('ride-status');
+            rideStatus.innerHTML = `
+                <div class="status-item success">
+                    <i class='bx bx-check-circle'></i>
+                    <span>Ride Completed!</span>
+                </div>
+            `;
+            
+            // Remove route and vehicle marker after a delay
+            setTimeout(() => {
+                if (routeLine) {
+                    map.removeLayer(routeLine);
+                }
+                if (bookedVehicleMarker) {
+                    map.removeLayer(bookedVehicleMarker);
+                }
+                isRideBooked = false;
+                bookedVehicleMarker = null;
+                routeLine = null;
+                
+                // Reset the booking form
+                document.getElementById('booking-form').style.display = 'block';
+                document.getElementById('ride-tracking').style.display = 'none';
+            }, 5000);
+        }
+
+        // Function to start ride tracking
+        function startRideTracking(vehicle, destinationLat, destinationLng) {
+            isRideBooked = true;
+            
+            // Hide booking form and show tracking
+            document.getElementById('booking-form').style.display = 'none';
+            document.getElementById('ride-tracking').style.display = 'block';
+            
+            // Create route line
+            if (routeLine) {
+                map.removeLayer(routeLine);
+            }
+            
+            routeLine = L.polyline([
+                [vehicle.lat, vehicle.lng],
+                [destinationLat, destinationLng]
+            ], {
+                color: '#00FF00',
+                weight: 4,
+                opacity: 0.7,
+                dashArray: '10, 10'
+            }).addTo(map);
+            
+            // Create booked vehicle marker
+            if (bookedVehicleMarker) {
+                map.removeLayer(bookedVehicleMarker);
+            }
+            
+            bookedVehicleMarker = L.marker([vehicle.lat, vehicle.lng], {
+                icon: L.divIcon({
+                    className: 'booked-vehicle-marker',
+                    html: `<div class="booked-vehicle-icon">🚗</div>`
+                })
+            }).addTo(map);
+            
+            // Start vehicle movement simulation
+            simulateVehicleMovement(vehicle.lat, vehicle.lng, destinationLat, destinationLng);
+        }
+
+        // Update the confirmBooking function
+        function confirmBooking() {
+            if (!validateSection('booking-confirmation')) {
+                return;
+            }
+
+            const destination = document.getElementById('destination').value;
+            const vehicle = document.getElementById('vehicle').value;
+            const premiumVehicle = document.getElementById('premium-vehicle')?.value;
+            const amenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked')).map(cb => cb.value);
+            const bodyguard = document.getElementById('bodyguard').value;
+
+            // Generate random destination coordinates (for demo purposes)
+            const destinationLat = userLat + (Math.random() - 0.5) * 0.1;
+            const destinationLng = userLng + (Math.random() - 0.5) * 0.1;
+
+            // Show loading state
+            const confirmBtn = document.querySelector('#booking-confirmation .confirm-btn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Processing...';
+
+            // Simulate booking process
+            setTimeout(() => {
+                // Start ride tracking
+                startRideTracking(selectedVehicle, destinationLat, destinationLng);
+                
+                // Show success message
+                showToast('Booking confirmed! Your ride is on the way.', 'success');
+                
+                // Hide booking form and show tracking
+                document.querySelector('.booking-form').style.display = 'none';
+                document.getElementById('ride-tracking').style.display = 'block';
+            }, 1500);
+        }
+
+        // Add styles for ride tracking
+        const style = document.createElement('style');
+        style.textContent = `
+            .booked-vehicle-marker {
+                background: none;
+                border: none;
+            }
+            
+            .booked-vehicle-icon {
+                font-size: 24px;
+                filter: drop-shadow(0 0 5px var(--main-color));
+            }
+            
+            #ride-tracking {
+                display: none;
+                background: var(--second-bg-color);
+                padding: 2rem;
+                border-radius: 16px;
+                border: 1px solid var(--main-color);
+                box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+                margin-top: 2rem;
+            }
+            
+            .status-item {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                font-size: 1.6rem;
+                margin: 1rem 0;
+            }
+            
+            .status-item i {
+                font-size: 2rem;
+                color: var(--main-color);
+            }
+            
+            .status-item.success {
+                color: var(--main-color);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add styles for direct booking
+        const bookingStyles = document.createElement('style');
+        bookingStyles.textContent = `
+            .vehicle-popup {
+                padding: 10px;
+                min-width: 200px;
+            }
+
+            .book-now-btn {
+                display: block;
+                width: 100%;
+                padding: 8px;
+                margin-top: 10px;
+                background: var(--main-color);
+                color: var(--bg-color);
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+            .book-now-btn:hover {
+                box-shadow: 0 0 10px var(--main-color);
+                transform: translateY(-2px);
+            }
+
+            .booking-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .modal-content {
+                background: var(--second-bg-color);
+                padding: 2rem;
+                border-radius: 16px;
+                border: 1px solid var(--main-color);
+                box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+                width: 90%;
+                max-width: 400px;
+            }
+
+            .modal-content h3 {
+                color: var(--main-color);
+                margin-bottom: 1.5rem;
+                font-size: 2rem;
+            }
+
+            .modal-input {
+                width: 100%;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                background: var(--bg-color);
+                color: var(--text-color);
+                border: 1px solid var(--main-color);
+                border-radius: 8px;
+                font-size: 1.6rem;
+            }
+
+            .modal-buttons {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .modal-buttons button {
+                flex: 1;
+                padding: 1rem;
+                border: none;
+                border-radius: 8px;
+                font-size: 1.6rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .modal-buttons .confirm-btn {
+                background: var(--main-color);
+                color: var(--bg-color);
+            }
+
+            .modal-buttons .cancel-btn {
+                background: var(--bg-color);
+                color: var(--text-color);
+                border: 1px solid var(--main-color);
+            }
+
+            .modal-buttons button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 0 10px var(--main-color);
+            }
+        `;
+        document.head.appendChild(bookingStyles);
+
+        // Add styles for current location button
+        const locationStyles = document.createElement('style');
+        locationStyles.textContent = `
+            .destination-options {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .current-location-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 1rem;
+                background: var(--bg-color);
+                color: var(--text-color);
+                border: 1px solid var(--main-color);
+                border-radius: 8px;
+                font-size: 1.6rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .current-location-btn i {
+                font-size: 2rem;
+                color: var(--main-color);
+            }
+
+            .current-location-btn:hover {
+                background: var(--main-color);
+                color: var(--bg-color);
+            }
+
+            .current-location-btn:hover i {
+                color: var(--bg-color);
+            }
+
+            .modal-input:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+        `;
+        document.head.appendChild(locationStyles);
+
+        // Add styles for enhanced tracking
+        const trackingStyles = document.createElement('style');
+        trackingStyles.textContent = `
+            .status-header {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid var(--main-color);
+            }
+
+            .driver-photo {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                border: 2px solid var(--main-color);
+            }
+
+            .driver-info h4 {
+                font-size: 1.8rem;
+                color: var(--main-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .driver-info p {
+                font-size: 1.4rem;
+                color: var(--text-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .driver-rating {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .driver-rating i {
+                color: #FFD700;
+            }
+
+            .status-progress {
+                margin: 2rem 0;
+            }
+
+            .progress-bar {
+                height: 8px;
+                background: var(--bg-color);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-bottom: 1rem;
+            }
+
+            .progress {
+                height: 100%;
+                background: var(--main-color);
+                transition: width 0.3s ease;
+            }
+
+            .progress-labels {
+                display: flex;
+                justify-content: space-between;
+                font-size: 1.4rem;
+                color: var(--text-color);
+            }
+
+            .status-details {
+                margin: 2rem 0;
+            }
+
+            .status-actions {
+                display: flex;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+
+            .action-btn {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 1rem;
+                border: none;
+                border-radius: 8px;
+                font-size: 1.6rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .action-btn:first-child {
+                background: var(--main-color);
+                color: var(--bg-color);
+            }
+
+            .action-btn.cancel {
+                background: var(--bg-color);
+                color: var(--text-color);
+                border: 1px solid var(--main-color);
+            }
+
+            .action-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 0 10px var(--main-color);
+            }
+        `;
+        document.head.appendChild(trackingStyles);
+
+        // Add enhanced styles
+        const enhancedStyles = document.createElement('style');
+        enhancedStyles.textContent = `
+            .progress-labels span {
+                position: relative;
+                color: var(--text-color);
+                opacity: 0.5;
+                transition: all 0.3s ease;
+            }
+
+            .progress-labels span.active {
+                color: var(--main-color);
+                opacity: 1;
+            }
+
+            .progress-labels span.active::after {
+                content: '';
+                position: absolute;
+                bottom: -5px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 6px;
+                height: 6px;
+                background: var(--main-color);
+                border-radius: 50%;
+            }
+
+            .status-text {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .status-text .label {
+                font-size: 1.2rem;
+                color: var(--text-color);
+                opacity: 0.7;
+            }
+
+            .status-text .value {
+                font-size: 1.6rem;
+                color: var(--main-color);
+                font-weight: 600;
+            }
+
+            .status-text .sub-text {
+                font-size: 1.2rem;
+                color: var(--text-color);
+                opacity: 0.7;
+            }
+
+            .status-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 1.5rem;
+                padding: 1rem;
+                background: var(--bg-color);
+                border-radius: 8px;
+                margin-bottom: 1rem;
+            }
+
+            .status-item i {
+                font-size: 2.4rem;
+                color: var(--main-color);
+                margin-top: 0.5rem;
+            }
+
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+
+            .status-item:hover {
+                animation: pulse 1s infinite;
+                cursor: pointer;
+            }
+        `;
+        document.head.appendChild(enhancedStyles);
+
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Add new functions for step navigation
+        function nextStep(currentStep) {
+            // Validate current section
+            const currentSection = getSectionId(currentStep);
+            if (!validateSection(currentSection)) {
+                return;
+            }
+
+            // Hide current section
+            document.querySelector(`#step-${currentStep}`).classList.remove('active');
+            document.querySelector(`#step-${currentStep + 1}`).classList.add('active');
+
+            // Hide current form section
+            document.querySelector(`#${currentSection}`).style.display = 'none';
+            document.querySelector(`#${getSectionId(currentStep + 1)}`).style.display = 'block';
+
+            // Update summary if moving to confirmation
+            if (currentStep === 2) {
+                updateBookingSummary();
+            }
+
+            // Scroll to top of the new section
+            document.querySelector(`#${getSectionId(currentStep + 1)}`).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function prevStep(currentStep) {
+            // Hide current section
+            document.querySelector(`#step-${currentStep}`).classList.remove('active');
+            document.querySelector(`#step-${currentStep - 1}`).classList.add('active');
+
+            // Hide current form section
+            document.querySelector(`#${getSectionId(currentStep)}`).style.display = 'none';
+            document.querySelector(`#${getSectionId(currentStep - 1)}`).style.display = 'block';
+
+            // Scroll to top of the previous section
+            document.querySelector(`#${getSectionId(currentStep - 1)}`).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getSectionId(step) {
+            switch(step) {
+                case 1: return 'vehicle-selection';
+                case 2: return 'destination-selection';
+                case 3: return 'booking-confirmation';
+                default: return '';
+            }
+        }
+
+        function updateBookingSummary() {
+            const vehicleType = document.getElementById('vehicle').value;
+            const premiumVehicle = document.getElementById('premium-vehicle')?.value;
+            const destination = document.getElementById('destination').value;
+            const distance = document.getElementById('distance').value;
+            const price = document.getElementById('price').textContent;
+            const bodyguard = document.getElementById('bodyguard').value;
+
+            // Update summary fields
+            document.getElementById('summary-vehicle').textContent = 
+                `${vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)}` +
+                (premiumVehicle ? ` - ${premiumVehicle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}` : '');
+            
+            document.getElementById('summary-destination').textContent = destination;
+            document.getElementById('summary-distance').textContent = distance;
+            document.getElementById('summary-price').textContent = price;
+
+            // Update bodyguard section if applicable
+            const bodyguardSection = document.getElementById('summary-bodyguard');
+            if (bodyguard === 'yes') {
+                bodyguardSection.style.display = 'block';
+                document.getElementById('summary-security').textContent = 
+                    `${document.getElementById('bodyguard-type').value.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} - ${document.getElementById('bodyguard-count').value} Bodyguards`;
+            } else {
+                bodyguardSection.style.display = 'none';
+            }
+
+            // Enable confirm button
+            document.querySelector('#booking-confirmation .confirm-btn').disabled = false;
+        }
+
+        function centerOnUser() {
+            if (userLat && userLng) {
+                map.setView([userLat, userLng], 13);
+            }
+        }
+
+        function refreshVehicles() {
+            addVehiclesToMap();
+        }
+
+        // Function to validate form sections
+        function validateSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const requiredInputs = section.querySelectorAll('[required]');
+            let isValid = true;
+            let firstInvalidInput = null;
+
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('invalid');
+                    if (!firstInvalidInput) firstInvalidInput = input;
+                } else {
+                    input.classList.remove('invalid');
+                }
+            });
+
+            if (!isValid && firstInvalidInput) {
+                firstInvalidInput.focus();
+                showToast('Please fill in all required fields');
+            }
+
+            return isValid;
+        }
+
+        // Function to show toast messages
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }, 100);
+        }
+
+        // Add new functions for the improved booking flow
+        function selectVehicle(vehicle) {
+            // Remove active class from all cards
+            document.querySelectorAll('.vehicle-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // Add active class to selected card
+            event.currentTarget.classList.add('active');
+
+            // Update vehicle selection
+            selectedVehicle = vehicle;
+            
+            // Enable next button
+            document.querySelector('#vehicle-selection .next-btn').disabled = false;
+            
+            // Show success message
+            showToast(`Selected ${vehicle.type} ${vehicle.subtype}`, 'success');
+        }
+
+        function toggleSecurity(level) {
+            // Remove active class from all security cards
+            document.querySelectorAll('.security-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // Add active class to selected card
+            event.currentTarget.classList.add('active');
+
+            // Update security selection
+            selectedSecurity = level;
+            updateSecuritySelection(level);
+        }
+
+        function updateSecuritySelection(level) {
+            // Update security details
+            const securityDetails = {
+                none: { price: 0, name: 'No Security' },
+                standard: { price: 40, name: 'Standard Security' },
+                premium: { price: 80, name: 'Premium Security' },
+                vip: { price: 150, name: 'VIP Security' }
+            };
+
+            selectedSecurity = securityDetails[level];
+            calculatePrice();
+        }
+
+        // Generate driver info
+        function generateDriverInfo() {
+            const firstNames = ['John', 'Sarah', 'Michael', 'Emma', 'David', 'Lisa'];
+            const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia'];
+            const carModels = ['Toyota Camry', 'Honda Accord', 'BMW 5 Series', 'Mercedes E-Class', 'Audi A6'];
+            
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const carModel = carModels[Math.floor(Math.random() * carModels.length)];
+            const rating = (4 + Math.random()).toFixed(1);
+            const phone = `+1${Math.floor(Math.random() * 900000000) + 1000000000}`;
+            const photo = `https://i.pravatar.cc/150?u=${Math.random()}`;
+            
+            return {
+                name: `${firstName} ${lastName}`,
+                carModel,
+                rating,
+                phone,
+                photo
+            };
+        }
+
+        // Update booked vehicle display
+        function updateBookedVehicleDisplay() {
+            if (!driverInfo) return;
+
+            document.getElementById('driver-name').textContent = driverInfo.name;
+            document.getElementById('vehicle-model').textContent = driverInfo.carModel;
+            document.getElementById('driver-rating').textContent = driverInfo.rating;
+            document.getElementById('trip-eta').textContent = `${Math.ceil(currentRouteDistance * 2)} minutes`;
+            document.getElementById('trip-distance').textContent = `${currentRouteDistance} km`;
+
+            // Show the booked vehicle display
+            document.getElementById('booked-vehicle-display').style.display = 'block';
+        }
+
+        // Contact driver
+        function contactDriver() {
+            if (!driverInfo) return;
+            
+            // In a real application, this would initiate a call or show contact options
+            showToast(`Calling ${driverInfo.name} at ${driverInfo.phone}`, 'info');
+        }
+
+        // Cancel ride
+        function cancelRide() {
+            if (confirm('Are you sure you want to cancel this ride?')) {
+                // Reset booking state
+                isRideBooked = false;
+                driverInfo = null;
+                
+                // Hide booked vehicle display
+                document.getElementById('booked-vehicle-display').style.display = 'none';
+                
+                // Show booking form
+                document.querySelector('.booking-form').style.display = 'block';
+                
+                // Reset form
+                document.getElementById('destination').value = '';
+                document.querySelectorAll('.vehicle-card').forEach(card => card.classList.remove('active'));
+                document.querySelectorAll('.security-card').forEach(card => card.classList.remove('active'));
+                
+                // Reset variables
+                selectedVehicle = null;
+                selectedSecurity = null;
+                currentRouteDistance = 0;
+                
+                // Remove route from map
+                if (routeLine) {
+                    map.removeLayer(routeLine);
+                }
+                
+                showToast('Ride cancelled successfully', 'success');
+            }
+        }
+
+        // Update confirm booking function
+        function confirmBooking() {
+            if (!validateBooking()) return;
+
+            const confirmBtn = document.querySelector('#booking-confirmation .confirm-btn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Processing...';
+
+            setTimeout(() => {
+                driverInfo = generateDriverInfo();
+                isRideBooked = true;
+                updateBookedVehicleDisplay();
+                showToast('Booking confirmed! Your ride is on the way.', 'success');
+                document.querySelector('.booking-form').style.display = 'none';
+            }, 1500);
+        }
+
+        // Function to handle destination input
+        function handleDestinationInput() {
+            const destinationInput = document.getElementById('destination');
+            const nextButton = document.querySelector('#destination-selection .next-btn');
+            
+            // Add event listener for input changes
+            destinationInput.addEventListener('input', debounce(function() {
+                const destination = this.value.trim();
+                if (destination.length < 3) {
+                    nextButton.disabled = true;
+                    return;
+                }
+
+                // Fetch location data from OpenStreetMap API
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.length > 0) {
+                            const location = data[0];
+                            const destLat = parseFloat(location.lat);
+                            const destLng = parseFloat(location.lon);
+
+                            // Update map with destination marker
+                            if (destinationMarker) {
+                                map.removeLayer(destinationMarker);
+                            }
+                            destinationMarker = L.marker([destLat, destLng], {
+                                icon: L.icon({
+                                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+                                    iconSize: [25, 41],
+                                    iconAnchor: [12, 41],
+                                    popupAnchor: [1, -34]
+                                })
+                            }).addTo(map);
+                            destinationMarker.bindPopup(`<b>Destination:</b><br>${location.display_name}`).openPopup();
+
+                            // Show route on map
+                            showRoute(destLat, destLng);
+
+                            // Enable next button
+                            nextButton.disabled = false;
+
+                            // Add to recent destinations
+                            addToRecentDestinations(destination, destLat, destLng);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching location:', error);
+                        showToast('Error finding location. Please try again.', 'error');
+                    });
+            }, 500));
+        }
+
+        // Function to show route on map
+        function showRoute(destLat, destLng) {
+            if (routeLine) {
+                map.removeLayer(routeLine);
+            }
+
+            // Create route line
+            routeLine = L.polyline([
+                [userLat, userLng],
+                [destLat, destLng]
+            ], {
+                color: '#00FF00',
+                weight: 4,
+                opacity: 0.7,
+                dashArray: '10, 10'
+            }).addTo(map);
+
+            // Calculate and display distance
+            currentRouteDistance = calculateDistance(userLat, userLng, destLat, destLng);
+            document.getElementById('summary-distance').textContent = `${currentRouteDistance} km`;
+            document.getElementById('summary-time').textContent = `${Math.ceil(currentRouteDistance * 2)} minutes`;
+
+            // Fit map to show entire route
+            map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+        }
+
+        // Function to add to recent destinations
+        function addToRecentDestinations(destination, lat, lng) {
+            const recentList = document.getElementById('recent-destinations-list');
+            const recentItem = document.createElement('div');
+            recentItem.className = 'recent-item';
+            recentItem.innerHTML = `
+                <div class="recent-destination-info">
+                    <i class='bx bx-map'></i>
+                    <span>${destination}</span>
+                </div>
+                <button onclick="selectRecentDestination('${destination}', ${lat}, ${lng})" class="select-destination-btn">
+                    <i class='bx bx-right-arrow-alt'></i>
+                </button>
+            `;
+            recentList.insertBefore(recentItem, recentList.firstChild);
+
+            // Keep only last 5 destinations
+            if (recentList.children.length > 5) {
+                recentList.removeChild(recentList.lastChild);
+            }
+        }
+
+        // Function to select recent destination
+        function selectRecentDestination(destination, lat, lng) {
+            document.getElementById('destination').value = destination;
+            if (destinationMarker) {
+                map.removeLayer(destinationMarker);
+            }
+            destinationMarker = L.marker([lat, lng], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34]
+                })
+            }).addTo(map);
+            destinationMarker.bindPopup(`<b>Destination:</b><br>${destination}`).openPopup();
+            showRoute(lat, lng);
+            document.querySelector('#destination-selection .next-btn').disabled = false;
+        }
+
+        // Function to use current location
+        function useCurrentLocation() {
+            if (!navigator.geolocation) {
+                showToast('Geolocation is not supported by your browser', 'error');
+                return;
+            }
+
+            const destinationInput = document.getElementById('destination');
+            destinationInput.value = 'Getting current location...';
+            destinationInput.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    try {
+                        // Reverse geocode to get address
+                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                        const data = await response.json();
+                        
+                        destinationInput.value = data.display_name;
+                        destinationInput.disabled = false;
+
+                        // Update map
+                        if (destinationMarker) {
+                            map.removeLayer(destinationMarker);
+                        }
+                        destinationMarker = L.marker([latitude, longitude], {
+                            icon: L.icon({
+                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34]
+                            })
+                        }).addTo(map);
+                        destinationMarker.bindPopup(`<b>Current Location:</b><br>${data.display_name}`).openPopup();
+
+                        // Show route
+                        showRoute(latitude, longitude);
+                        document.querySelector('#destination-selection .next-btn').disabled = false;
+                    } catch (error) {
+                        console.error('Error getting address:', error);
+                        destinationInput.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                        destinationInput.disabled = false;
+                    }
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    showToast('Unable to get your current location', 'error');
+                    destinationInput.value = '';
+                    destinationInput.disabled = false;
+                }
+            );
+        }
+
+        // Add styles for recent destinations
+        const recentDestinationsStyles = document.createElement('style');
+        recentDestinationsStyles.textContent = `
+            .recent-destination-info {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .recent-destination-info i {
+                color: var(--main-color);
+                font-size: 2rem;
+            }
+
+            .select-destination-btn {
+                background: none;
+                border: none;
+                color: var(--main-color);
+                cursor: pointer;
+                padding: 0.5rem;
+                transition: all 0.3s ease;
+            }
+
+            .select-destination-btn:hover {
+                transform: translateX(5px);
+            }
+
+            .recent-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem;
+                background: var(--second-bg-color);
+                border-radius: 8px;
+                margin-bottom: 0.5rem;
+                transition: all 0.3s ease;
+            }
+
+            .recent-item:hover {
+                background: var(--main-color);
+                color: var(--bg-color);
+            }
+
+            .recent-item:hover .select-destination-btn {
+                color: var(--bg-color);
+            }
+        `;
+        document.head.appendChild(recentDestinationsStyles);
+
+        // Initialize destination handling when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            handleDestinationInput();
+        });
+
+        // Add new function to update vehicle cards
+        function updateVehicleCards() {
+            const standardContainer = document.getElementById('standard-vehicles');
+            const premiumContainer = document.getElementById('premium-vehicles');
+            const luxuryContainer = document.getElementById('luxury-vehicles');
+
+            // Clear existing cards
+            standardContainer.innerHTML = '';
+            premiumContainer.innerHTML = '';
+            luxuryContainer.innerHTML = '';
+
+            // Group vehicles by type and sort by distance
+            const standardVehicles = vehicleMarkers
+                .filter(marker => marker.vehicle.type === 'Standard' && marker.vehicle.isAvailable)
+                .sort((a, b) => {
+                    const distA = calculateDistance(userLat, userLng, a.vehicle.lat, a.vehicle.lng);
+                    const distB = calculateDistance(userLat, userLng, b.vehicle.lat, b.vehicle.lng);
+                    return distA - distB;
+                });
+
+            const premiumVehicles = vehicleMarkers
+                .filter(marker => marker.vehicle.type === 'Premium' && marker.vehicle.isAvailable)
+                .sort((a, b) => {
+                    const distA = calculateDistance(userLat, userLng, a.vehicle.lat, a.vehicle.lng);
+                    const distB = calculateDistance(userLat, userLng, b.vehicle.lat, b.vehicle.lng);
+                    return distA - distB;
+                });
+
+            const luxuryVehicles = vehicleMarkers
+                .filter(marker => marker.vehicle.type === 'Luxury' && marker.vehicle.isAvailable)
+                .sort((a, b) => {
+                    const distA = calculateDistance(userLat, userLng, a.vehicle.lat, a.vehicle.lng);
+                    const distB = calculateDistance(userLat, userLng, b.vehicle.lat, b.vehicle.lng);
+                    return distA - distB;
+                });
+
+            // Function to create vehicle card
+            function createVehicleCard(vehicle) {
+                const distance = calculateDistance(userLat, userLng, vehicle.lat, vehicle.lng);
+                const card = document.createElement('div');
+                card.className = 'vehicle-card';
+                card.innerHTML = `
+                    <div class="vehicle-info">
+                        <div class="vehicle-header">
+                            <h5>${vehicle.subtype}</h5>
+                            <span class="vehicle-type ${vehicle.type.toLowerCase()}">${vehicle.type}</span>
+                        </div>
+                        <div class="vehicle-details">
+                            <div class="detail-row">
+                                <span class="seats"><i class='bx bx-user'></i> ${vehicle.seats} seats</span>
+                                <span class="price">$${vehicle.price}/km</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="distance"><i class='bx bx-map'></i> ${distance} km away</span>
+                                <span class="eta"><i class='bx bx-time'></i> ${vehicle.eta} min</span>
+                            </div>
+                        </div>
+                        ${vehicle.amenities.length > 0 ? `
+                            <div class="amenities">
+                                ${vehicle.amenities.map(amenity => `
+                                    <span class="amenity"><i class='bx bx-${getAmenityIcon(amenity)}'></i> ${amenity}</span>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="vehicle-status">
+                            <span class="status-dot"></span>
+                            Available Now
+                        </div>
+                    </div>
+                `;
+
+                // Add click handler
+                card.onclick = () => {
+                    // Remove active class from all cards
+                    document.querySelectorAll('.vehicle-card').forEach(c => c.classList.remove('active'));
+                    // Add active class to selected card
+                    card.classList.add('active');
+                    // Update selected vehicle
+                    selectedVehicle = vehicle;
+                    // Enable next button
+                    document.querySelector('#vehicle-selection .next-btn').disabled = false;
+                    // Show success message
+                    showToast(`Selected ${vehicle.type} ${vehicle.subtype}`, 'success');
+                    // Center map on selected vehicle
+                    map.setView([vehicle.lat, vehicle.lng], 15);
+                };
+
+                return card;
+            }
+
+            // Add vehicles to their respective containers
+            standardVehicles.forEach(marker => {
+                standardContainer.appendChild(createVehicleCard(marker.vehicle));
+            });
+
+            premiumVehicles.forEach(marker => {
+                premiumContainer.appendChild(createVehicleCard(marker.vehicle));
+            });
+
+            luxuryVehicles.forEach(marker => {
+                luxuryContainer.appendChild(createVehicleCard(marker.vehicle));
+            });
+
+            // Show message if no vehicles available
+            if (standardVehicles.length === 0) {
+                standardContainer.innerHTML = '<div class="no-vehicles">No standard vehicles available nearby</div>';
+            }
+            if (premiumVehicles.length === 0) {
+                premiumContainer.innerHTML = '<div class="no-vehicles">No premium vehicles available nearby</div>';
+            }
+            if (luxuryVehicles.length === 0) {
+                luxuryContainer.innerHTML = '<div class="no-vehicles">No luxury vehicles available nearby</div>';
+            }
+        }
+
+        // Add new styles for vehicle cards
+        const vehicleCardStyles = document.createElement('style');
+        vehicleCardStyles.textContent = `
+            .vehicle-card {
+                background: var(--bg-color);
+                border: 1px solid var(--main-color);
+                border-radius: 12px;
+                padding: 1.5rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .vehicle-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            }
+
+            .vehicle-card.active {
+                border: 2px solid var(--main-color);
+                background: rgba(0, 255, 0, 0.1);
+            }
+
+            .vehicle-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            .vehicle-header h5 {
+                color: var(--main-color);
+                font-size: 1.8rem;
+                margin: 0;
+            }
+
+            .vehicle-type {
+                padding: 0.4rem 0.8rem;
+                border-radius: 20px;
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+
+            .vehicle-type.standard {
+                background: rgba(255, 165, 0, 0.2);
+                color: #FFA500;
+            }
+
+            .vehicle-type.premium {
+                background: rgba(0, 255, 0, 0.2);
+                color: #00FF00;
+            }
+
+            .vehicle-type.luxury {
+                background: rgba(255, 215, 0, 0.2);
+                color: #FFD700;
+            }
+
+            .vehicle-details {
+                margin: 1rem 0;
+            }
+
+            .detail-row {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+                font-size: 1.4rem;
+            }
+
+            .detail-row span {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .detail-row i {
+                color: var(--main-color);
+            }
+
+            .amenities {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin: 1rem 0;
+            }
+
+            .amenity {
+                background: var(--second-bg-color);
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .amenity i {
+                color: var(--main-color);
+            }
+
+            .vehicle-status {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 1.4rem;
+                color: var(--main-color);
+                margin-top: 1rem;
+            }
+
+            .status-dot {
+                width: 8px;
+                height: 8px;
+                background: var(--main-color);
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
+            }
+
+            .no-vehicles {
+                text-align: center;
+                padding: 2rem;
+                color: var(--text-color);
+                opacity: 0.7;
+                font-style: italic;
+                background: var(--second-bg-color);
+                border-radius: 8px;
+            }
+        `;
+        document.head.appendChild(vehicleCardStyles);
+
+        // Function to get amenity icon
+        function getAmenityIcon(amenity) {
+            const icons = {
+                'wifi': 'wifi',
+                'refreshments': 'drink',
+                'child-seat': 'child',
+                'privacy': 'lock-alt'
+            };
+            return icons[amenity] || 'check';
+        }
+    </script>
+
+    <!-- Add ride tracking section -->
+    <div id="ride-tracking" class="info-box">
+        <h3>Ride in Progress</h3>
+        <div id="ride-status">
+            <div class="status-item">
+                <i class='bx bx-time'></i>
+                <span>Calculating ETA...</span>
+            </div>
+            <div class="status-item">
+                <i class='bx bx-map'></i>
+                <span>Calculating distance...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add booked vehicle display section -->
+    <div id="booked-vehicle-display" class="booked-vehicle-section" style="display: none;">
+        <div class="booked-vehicle-content">
+            <div class="vehicle-status">
+                <div class="status-header">
+                    <h3>Your Ride</h3>
+                    <span class="status-badge">On the way</span>
+                </div>
+                <div class="vehicle-info">
+                    <div class="driver-details">
+                        <img src="images/driver-placeholder.jpg" alt="Driver" class="driver-photo">
+                        <div class="driver-info">
+                            <h4 id="driver-name">Loading...</h4>
+                            <p id="vehicle-model">Loading...</p>
+                            <div class="rating">
+                                <i class='bx bxs-star'></i>
+                                <span id="driver-rating">4.8</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="trip-details">
+                        <div class="detail-item">
+                            <i class='bx bx-time'></i>
+                            <div>
+                                <span class="label">ETA</span>
+                                <span id="trip-eta">Calculating...</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class='bx bx-map'></i>
+                            <div>
+                                <span class="label">Distance</span>
+                                <span id="trip-distance">Calculating...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="contact-driver" onclick="contactDriver()">
+                        <i class='bx bx-phone'></i>
+                        Contact Driver
+                    </button>
+                    <button class="cancel-ride" onclick="cancelRide()">
+                        <i class='bx bx-x'></i>
+                        Cancel Ride
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

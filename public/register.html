@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Royal SafeTravels</title>
+    <link href="css/boxicons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00ff00;
+            --dark-color: #1a1a1a;
+            --light-color: #ffffff;
+            --hover-color: #00cc00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--dark-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            animation: float 6s ease-in-out infinite, borderGlow 4s ease-in-out infinite;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--light-color);
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        h2 {
+            color: var(--light-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+        .form-group label {
+            display: block;
+            color: var(--light-color);
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 5px;
+            color: var(--light-color);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: var(--dark-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .register-btn:hover {
+            background: var(--hover-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .register-btn:active {
+            transform: translateY(1px);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--light-color);
+        }
+
+        .login-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.15; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0.15; }
+        }
+
+        @keyframes borderGlow {
+            0% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(0, 255, 0, 0.4); }
+            100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow"></div>
+    <div class="register-container">
+        <a href="/" class="logo">Royal <span>SafeTravel</span></a>
+        <h2>Register Account</h2>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" name="fullname" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+            </div>
+            <button type="submit" class="register-btn">Register</button>
+        </form>
+        <div class="login-link">
+            <p>Already have an account? <a href="./login.html">Login</a></p>
+        </div>
+    </div>
+
+    <script>
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Basic validation
+            if (!fullname || !email || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            // Store user data (in a real app, this would be sent to a server)
+            localStorage.setItem('registeredUser', JSON.stringify({
+                fullname,
+                email
+            }));
+
+            // Show success message
+            alert('Registration successful! Redirecting to login...');
+
+            // Redirect to login page after a short delay
+            setTimeout(() => {
+                window.location.href = './login.html';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
